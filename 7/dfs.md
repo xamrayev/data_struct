@@ -81,12 +81,7 @@ Bu yerda:
 
 # 5. C++ da DFS algoritmi
 
-Quyidagi kod:
 
-* **Adjacency Matrix**
-* **Funksiyasiz**
-* **Stack ishlatadi**
-* Har qator **kommentariya bilan tushuntirilgan**
 
 ```cpp
 #include <iostream>
