@@ -81,12 +81,6 @@ Bu yerda:
 
 # 5. C++ da BFS algoritmi
 
-Quyidagi kod:
-
-* **Adjacency Matrix** ishlatadi
-* **Funksiyasiz**
-* **Oddiy BFS**
-* Har qator **kommentariya bilan tushuntirilgan**
 
 ```cpp
 #include <iostream>
