@@ -1,36 +1,36 @@
 ## Graf strukturasida qidirish: **DFS (Depth-First Search)**
 
-**Fan:** Ma’lumotlar tuzilmalari va algoritmlar
+**Fan:** Ma’lumotlar tuzilmalari va algoritmlar  
 **Dasturlash tili:** C++
 
 ---
 
-# 1. DFS haqida tushuncha
+# 1\. DFS haqida tushuncha
 
 **DFS (Depth-First Search)** — grafni **chuqurlik bo‘yicha qidirish algoritmi** hisoblanadi.
 
 Algoritm quyidagi tamoyil asosida ishlaydi:
 
-* Boshlang‘ich tugundan boshlanadi
-* Eng birinchi qo‘shni tugunga o‘tadi
-* Keyin yana uning qo‘shnisiga o‘tadi
-* Shu tarzda **oxirigacha chuqurlashib boradi**
-* Agar davom etish mumkin bo‘lmasa, **orqaga qaytadi (backtracking)**
+*   Boshlang‘ich tugundan boshlanadi
+*   Eng birinchi qo‘shni tugunga o‘tadi
+*   Keyin yana uning qo‘shnisiga o‘tadi
+*   Shu tarzda **oxirigacha chuqurlashib boradi**
+*   Agar davom etish mumkin bo‘lmasa, **orqaga qaytadi (backtracking)**
 
 DFS ko‘pincha **stack** yoki **rekursiya** yordamida ishlaydi.
 
 ---
 
-# 2. DFS qayerda ishlatiladi
+# 2\. DFS qayerda ishlatiladi
 
 DFS quyidagi masalalarda ishlatiladi:
 
-* Grafdagi **barcha tugunlarni aylanib chiqish**
-* **Yo‘l mavjudligini tekshirish**
-* **Topologik saralash**
-* **Cycle (halqa) aniqlash**
-* **Connected componentlarni topish**
-* **Labirint yoki yo‘l topish masalalari**
+*   Grafdagi **barcha tugunlarni aylanib chiqish**
+*   **Yo‘l mavjudligini tekshirish**
+*   **Topologik saralash**
+*   **Cycle (halqa) aniqlash**
+*   **Connected componentlarni topish**
+*   **Labirint yoki yo‘l topish masalalari**
 
 Misol graf:
 
@@ -50,38 +50,41 @@ Misol graf:
 
 ---
 
-# 3. DFS algoritmi ishlash bosqichlari
+# 3\. DFS algoritmi ishlash bosqichlari
 
-1. Boshlang‘ich tugunni tanlash
-2. Uni **visited** deb belgilash
-3. Tugunni ekranga chiqarish
-4. Uning qo‘shnilarini tekshirish
-5. Agar qo‘shni hali ko‘rilmagan bo‘lsa:
+Boshlang‘ich tugunni tanlash
 
-   * unga o‘tish
-6. Agar davom etish mumkin bo‘lmasa:
+Uni **visited** deb belgilash
 
-   * oldingi tugunga qaytish
+Tugunni ekranga chiqarish
+
+Uning qo‘shnilarini tekshirish
+
+Agar qo‘shni hali ko‘rilmagan bo‘lsa:
+
+*   unga o‘tish
+
+Agar davom etish mumkin bo‘lmasa:
+
+*   oldingi tugunga qaytish
 
 ---
 
-# 4. DFS algoritmining murakkabligi
+# 4\. DFS algoritmining murakkabligi
 
-| Ko‘rsatkich         | Qiymat       |
-| ------------------- | ------------ |
-| Vaqt murakkabligi   | **O(V + E)** |
-| Xotira murakkabligi | **O(V)**     |
+| Ko‘rsatkich | Qiymat |
+| --- | --- |
+| Vaqt murakkabligi | **O(V + E)** |
+| Xotira murakkabligi | **O(V)** |
 
 Bu yerda:
 
-* **V** — tugunlar soni
-* **E** — qirralar soni
+*   **V** — tugunlar soni
+*   **E** — qirralar soni
 
 ---
 
-# 5. C++ da DFS algoritmi
-
-
+# 5\. C++ da DFS algoritmi
 
 ```cpp
 #include <iostream>
@@ -151,7 +154,7 @@ int main() {
 
 ---
 
-# 6. Kod ishlash jarayoni
+# 6\. Kod ishlash jarayoni
 
 Graf:
 
@@ -211,18 +214,18 @@ Natija:
 
 ---
 
-# 7. BFS va DFS farqi
+# 7\. BFS va DFS farqi
 
-| Xususiyat      | BFS              | DFS                |
-| -------------- | ---------------- | ------------------ |
+| Xususiyat | BFS | DFS |
+| --- | --- | --- |
 | Qidirish usuli | kenglik bo‘yicha | chuqurlik bo‘yicha |
-| Data structure | Queue            | Stack              |
-| Eng qisqa yo‘l | topadi           | har doim emas      |
-| Ishlash usuli  | Level            | Deep               |
+| Data structure | Queue | Stack |
+| Eng qisqa yo‘l | topadi | har doim emas |
+| Ishlash usuli | Level | Deep |
 
 ---
 
-# 8. Talabalar uchun mashqlar
+# 8\. Talabalar uchun mashqlar
 
 ### 1-masala
 
