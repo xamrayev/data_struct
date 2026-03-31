@@ -96,108 +96,151 @@ Millionlab yozuvlar bo‘lsa:
 
 Quyida **soddalashtirilgan B-daraxt (faqat insert + print)** keltiriladi.
 
+-Zo‘r tayyorlangan konspekt — endi uni **didaktik jihatdan kuchaytiramiz**:
+👉 har bir asosiy operatsiyada **strukturali `cout` loglar** qo‘shamiz, shunda talabalar **daraxt ichida nima bo‘layotganini real vaqt rejimida ko‘radi**.
+
+Quyida siz bergan kodingiz **debug / tushuntiruvchi versiya**ga aylantirildi.
+
 ---
 
-## 4.1. Tugun (Node) strukturasi
+# 📘 4. C++ da B-daraxt (STEP-BY-STEP LOG bilan)
+
+## 🔹 4.1. Tugun (Node)
 
 ```cpp
 #include <iostream>
+#include <vector>
 using namespace std;
 
-const int T = 2; // daraja (minimum degree)
+class BTreeNode {
+public:
+    vector<int> keys;              // kalitlar
+    vector<BTreeNode*> children;   // bolalar
+    bool isLeaf;                   // bargmi?
+    int t;                         // daraja
 
-struct BTreeNode {
-    int keys[2*T-1];   // kalitlar
-    BTreeNode* children[2*T]; // farzandlar
-    int n; // nechta kalit bor
-    bool leaf; // bargmi yoki yo‘q
-
-    BTreeNode(bool leaf) {
-        this->leaf = leaf;
-        n = 0;
+    BTreeNode(int t, bool isLeaf) {
+        this->t = t;
+        this->isLeaf = isLeaf;
     }
 };
 ```
 
 ---
 
-## 4.2. Daraxtni ko‘rsatish (print)
+# 🔹 4.2. Daraxtni chiqarish (inorder + log)
 
 ```cpp
 void printTree(BTreeNode* root) {
     if (root == NULL) return;
 
-    for (int i = 0; i < root->n; i++) {
-        if (!root->leaf)
-            printTree(root->children[i]);
+    cout << "[Node: ";
+    for (int k : root->keys)
+        cout << k << " ";
+    cout << "]\n";
 
-        cout << root->keys[i] << " ";
+    for (int i = 0; i < root->children.size(); i++) {
+        cout << " -> child " << i << ":\n";
+        printTree(root->children[i]);
     }
-
-    if (!root->leaf)
-        printTree(root->children[root->n]);
 }
 ```
 
 ---
 
-## 4.3. Tugunni bo‘lish (split)
+# 🔹 4.3. SPLIT — eng muhim qism (to‘liq log bilan)
 
 ```cpp
-void splitChild(BTreeNode* parent, int i, BTreeNode* y) {
-    BTreeNode* z = new BTreeNode(y->leaf);
-    z->n = T - 1;
+void splitChild(BTreeNode* parent, int i) {
+    BTreeNode* y = parent->children[i];
 
-    for (int j = 0; j < T-1; j++)
-        z->keys[j] = y->keys[j+T];
+    cout << "\n[SPLIT BOSHLANDI]\n";
+    cout << "Parent node: ";
+    for (int k : parent->keys) cout << k << " ";
+    cout << "\nSplit qilinayotgan child: ";
+    for (int k : y->keys) cout << k << " ";
+    cout << endl;
 
-    if (!y->leaf) {
-        for (int j = 0; j < T; j++)
-            z->children[j] = y->children[j+T];
+    BTreeNode* z = new BTreeNode(y->t, y->isLeaf);
+
+    // o‘ng qismini olish
+    for (int j = y->t; j < y->keys.size(); j++)
+        z->keys.push_back(y->keys[j]);
+
+    int middle = y->keys[y->t - 1];
+
+    // chap qismini saqlab qolamiz
+    y->keys.resize(y->t - 1);
+
+    // agar barg bo‘lmasa farzandlarni ham bo‘lamiz
+    if (!y->isLeaf) {
+        for (int j = y->t; j < y->children.size(); j++)
+            z->children.push_back(y->children[j]);
+
+        y->children.resize(y->t);
     }
 
-    y->n = T - 1;
+    // parentga qo‘shamiz
+    parent->children.insert(parent->children.begin() + i + 1, z);
+    parent->keys.insert(parent->keys.begin() + i, middle);
 
-    for (int j = parent->n; j >= i+1; j--)
-        parent->children[j+1] = parent->children[j];
+    cout << "O‘rtadagi element yuqoriga chiqdi: " << middle << endl;
 
-    parent->children[i+1] = z;
-
-    for (int j = parent->n-1; j >= i; j--)
-        parent->keys[j+1] = parent->keys[j];
-
-    parent->keys[i] = y->keys[T-1];
-    parent->n++;
+    cout << "Chap child: ";
+    for (int k : y->keys) cout << k << " ";
+    cout << "\nO‘ng child: ";
+    for (int k : z->keys) cout << k << " ";
+    cout << "\n[SPLIT TUGADI]\n";
 }
 ```
 
 ---
 
-## 4.4. Insert (asosiy qism)
+# 🔹 4.4. Insert (log bilan)
 
 ```cpp
 void insertNonFull(BTreeNode* node, int k) {
-    int i = node->n - 1;
+    cout << "\n[INSERT NON FULL] k = " << k << endl;
 
-    if (node->leaf) {
+    int i = node->keys.size() - 1;
+
+    // Agar barg bo‘lsa
+    if (node->isLeaf) {
+        cout << "Barg tugun. Oddiy qo‘shish...\n";
+
+        node->keys.push_back(0); // joy ochamiz
+
         while (i >= 0 && k < node->keys[i]) {
             node->keys[i+1] = node->keys[i];
             i--;
         }
 
         node->keys[i+1] = k;
-        node->n++;
+
+        cout << "Natija: ";
+        for (int x : node->keys) cout << x << " ";
+        cout << endl;
+
     } else {
+        cout << "Ichki tugun. Qaysi childga tushishini aniqlaymiz...\n";
+
         while (i >= 0 && k < node->keys[i])
             i--;
 
         i++;
 
-        if (node->children[i]->n == 2*T-1) {
-            splitChild(node, i, node->children[i]);
+        cout << "Tanlangan child index: " << i << endl;
 
-            if (k > node->keys[i])
+        // agar child to‘la bo‘lsa
+        if (node->children[i]->keys.size() == 2*node->t - 1) {
+            cout << "Child to‘la → split qilamiz\n";
+
+            splitChild(node, i);
+
+            if (k > node->keys[i]) {
                 i++;
+                cout << "O‘ng childga o‘tdi\n";
+            }
         }
 
         insertNonFull(node->children[i], k);
@@ -207,22 +250,32 @@ void insertNonFull(BTreeNode* node, int k) {
 
 ---
 
-## 4.5. Asosiy insert funksiyasi
+# 🔹 4.5. Asosiy insert (log bilan)
 
 ```cpp
-BTreeNode* insert(BTreeNode* root, int k) {
+BTreeNode* insert(BTreeNode* root, int k, int t) {
+
+    cout << "\n=========================\n";
+    cout << "INSERT: " << k << endl;
+
+    // agar daraxt bo‘sh bo‘lsa
     if (root == NULL) {
-        root = new BTreeNode(true);
-        root->keys[0] = k;
-        root->n = 1;
+        cout << "Yangi root yaratilmoqda\n";
+
+        root = new BTreeNode(t, true);
+        root->keys.push_back(k);
+
         return root;
     }
 
-    if (root->n == 2*T-1) {
-        BTreeNode* s = new BTreeNode(false);
-        s->children[0] = root;
+    // root to‘la bo‘lsa
+    if (root->keys.size() == 2*t - 1) {
+        cout << "Root to‘la → yangi root + split\n";
 
-        splitChild(s, 0, root);
+        BTreeNode* s = new BTreeNode(t, false);
+        s->children.push_back(root);
+
+        splitChild(s, 0);
 
         int i = 0;
         if (k > s->keys[0])
@@ -240,26 +293,52 @@ BTreeNode* insert(BTreeNode* root, int k) {
 
 ---
 
-## 4.6. To‘liq main dastur
+# 🔹 4.6. MAIN (to‘liq jarayonni ko‘rish)
 
 ```cpp
 int main() {
+    int t = 2;
     BTreeNode* root = NULL;
 
     int arr[] = {10, 20, 5, 6, 12, 30, 7, 17};
 
     for (int i = 0; i < 8; i++) {
-        root = insert(root, arr[i]);
-    }
+        root = insert(root, arr[i], t);
 
-    cout << "B-daraxt (inorder): ";
-    printTree(root);
+        cout << "\n--- HOZIRGI DARAxt ---\n";
+        printTree(root);
+        cout << "----------------------\n";
+    }
 
     return 0;
 }
 ```
 
 ---
+
+# 📘 5. Talaba nimani ko‘radi (MUHIM)
+
+Dastur ishlaganda quyidagilar chiqadi:
+
+### 🔹 Misol:
+
+```text
+INSERT: 6
+Child to‘la → split qilamiz
+
+[SPLIT BOSHLANDI]
+Split qilinayotgan child: 5 10 20
+O‘rtadagi element yuqoriga chiqdi: 10
+Chap child: 5
+O‘ng child: 20
+[SPLIT TUGADI]
+```
+
+
+
+---
+
+
 
 ## 5. Kod tushuntirishi (oddiy)
 
@@ -334,6 +413,45 @@ Foydalanuvchidan N ta son olib:
 * natijani chiqaring
 
 ---
+
+# 📘 Qo‘shimcha topshiriqlar (log asosida)
+
+### 🔹 1-topshiriq
+
+Loglardan foydalanib yozing:
+
+👉 qaysi insertda split bo‘ldi?
+
+---
+
+### 🔹 2-topshiriq
+
+Har bir bosqichdan keyin:
+
+👉 daraxtni qo‘lda chizing
+
+---
+
+### 🔹 3-topshiriq
+
+Logni kengaytiring:
+
+```cpp
+cout << "Hozir node darajasi: ???";
+```
+
+---
+
+### 🔹 4-topshiriq
+
+Search funksiyasiga ham log qo‘shing:
+
+```cpp
+cout << "Qidirilmoqda: " << k << endl;
+```
+
+---
+
 
 ## 8. Savollar
 
