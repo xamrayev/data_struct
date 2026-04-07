@@ -1,7 +1,3 @@
-Quyida mavzu **to‘liq metodik qo‘llanma** sifatida qayta yozildi. Tuzilishi shundayki, talaba **bosqichma-bosqich copy–paste qilib borib, oxirida to‘liq ishlaydigan interaktiv dastur** hosil qiladi.
-
----
-
 # 📘 MAVZU: Uyumlarni saralash (Heap Sort) va ASCII daraxt bilan vizualizatsiya (C++)
 
 ---
